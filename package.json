@@ -1,5 +1,5 @@
 {
-  "name": "four-digit-internet-connector",
+  "name": "wasl-connect",
   "version": "1.0.0",
   "private": true,
   "scripts": {
@@ -7,6 +7,6 @@
   },
   "dependencies": {
     "express": "^5.1.0",
-    "ws": "^8.18.3"
+    "socket.io": "^4.8.1"
   }
 }
