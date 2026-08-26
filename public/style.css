@@ -1,0 +1,195 @@
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+
+  font-family:
+    -apple-system,
+    BlinkMacSystemFont,
+    "Segoe UI",
+    Tahoma,
+    Arial,
+    sans-serif;
+
+  background: #f2f4f7;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  padding: 20px;
+}
+
+.container {
+  width: 100%;
+  max-width: 520px;
+}
+
+.card {
+  background: white;
+  border-radius: 24px;
+  padding: 25px;
+
+  box-shadow:
+    0 12px 40px rgba(0, 0, 0, 0.08);
+}
+
+.logo {
+  font-size: 55px;
+  text-align: center;
+}
+
+h1,
+h2,
+h3 {
+  margin-top: 0;
+}
+
+h1,
+h2 {
+  text-align: center;
+}
+
+.card > p {
+  text-align: center;
+  color: #777;
+}
+
+input {
+  width: 100%;
+  padding: 15px;
+
+  border: 1px solid #ddd;
+  border-radius: 12px;
+
+  font-size: 16px;
+  outline: none;
+
+  margin: 15px 0 10px;
+}
+
+input:focus {
+  border-color: #111;
+}
+
+button {
+  border: 0;
+  border-radius: 12px;
+
+  padding: 13px 18px;
+
+  background: #111;
+  color: white;
+
+  font-size: 15px;
+  cursor: pointer;
+}
+
+#joinButton {
+  width: 100%;
+}
+
+button:disabled {
+  opacity: 0.5;
+}
+
+.hidden {
+  display: none !important;
+}
+
+#error {
+  color: #d32f2f;
+  text-align: center;
+  margin-top: 12px;
+}
+
+header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+
+  margin-bottom: 25px;
+}
+
+header h2 {
+  margin-bottom: 4px;
+}
+
+#myName {
+  color: #777;
+  font-size: 13px;
+}
+
+.online {
+  color: #2e7d32;
+  font-size: 13px;
+}
+
+.user {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+
+  padding: 12px;
+
+  border: 1px solid #eee;
+  border-radius: 14px;
+
+  margin-bottom: 9px;
+}
+
+.userName {
+  font-weight: 600;
+}
+
+.callBox {
+  margin-top: 20px;
+  padding: 22px;
+
+  background: #f5f5f5;
+  border-radius: 18px;
+
+  text-align: center;
+}
+
+.bigIcon {
+  font-size: 48px;
+}
+
+.buttons {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+
+  margin-top: 15px;
+}
+
+.accept {
+  background: #2e7d32;
+}
+
+.reject {
+  background: #c62828;
+}
+
+@media (max-width: 500px) {
+
+  body {
+    padding: 10px;
+  }
+
+  .card {
+    padding: 18px;
+  }
+
+  .buttons {
+    flex-direction: column;
+  }
+
+  .buttons button {
+    width: 100%;
+  }
+}
