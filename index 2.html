@@ -3,94 +3,62 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>أداة الاتصال الصوتي المباشر</title>
-    <!-- تضمين مكتبة PeerJS للاتصال السحابي الحقيقي -->
-    <script src="https://unpkg.com/peerjs@1.4.7/dist/peerjs.min.js"></script>
+    <title>نظام الاتصال الصوتي المتقدم مع الرنين</title>
+    <!-- تضمين مكتبة PeerJS للربط السحابي -->
+    <script src="https://unpkg.com"></script>
     <style>
         :root {
-            --primary-color: #2563eb;
-            --primary-hover: #1d4ed8;
-            --success-color: #16a34a;
-            --danger-color: #dc2626;
-            --bg-color: #f8fafc;
-            --card-bg: #ffffff;
-            --text-color: #1e293b;
+            --bg-color: #0f172a;
+            --card-bg: #1e293b;
+            --text-color: #f8fafc;
+            --primary: #10b981;
+            --danger: #ef4444;
         }
-
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
             background-color: var(--bg-color);
             color: var(--text-color);
-            margin: 0;
-            padding: 20px;
             display: flex;
             justify-content: center;
             align-items: center;
             min-height: 100vh;
+            margin: 0;
+            padding: 20px;
+            box-sizing: border-box;
         }
-
         .container {
             background-color: var(--card-bg);
             padding: 30px;
             border-radius: 16px;
-            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.3);
             width: 100%;
             max-width: 450px;
             text-align: center;
         }
-
-        h1 {
-            color: var(--primary-color);
-            font-size: 24px;
-            margin-bottom: 25px;
-        }
-
-        .user-id-box {
-            background-color: #eff6ff;
-            border: 2px dashed var(--primary-color);
+        h1 { font-size: 24px; margin-bottom: 25px; color: var(--primary); }
+        .id-box {
+            background-color: rgba(16, 185, 129, 0.1);
+            border: 1px dashed var(--primary);
             padding: 15px;
-            border-radius: 10px;
-            font-size: 18px;
+            border-radius: 8px;
             font-weight: bold;
+            font-size: 18px;
             margin-bottom: 25px;
-        }
-
-        .user-id-box span {
-            color: var(--primary-color);
-            display: block;
-            margin-top: 5px;
-            font-size: 22px;
             letter-spacing: 1px;
         }
-
-        .input-group {
-            margin-bottom: 20px;
-            text-align: right;
-        }
-
-        label {
-            display: block;
-            margin-bottom: 8px;
-            font-weight: 600;
-            font-size: 14px;
-        }
-
         input {
             width: 100%;
             padding: 12px;
-            border: 1px solid #cbd5e1;
+            border: 2px solid #334155;
+            background-color: #0f172a;
+            color: white;
             border-radius: 8px;
             font-size: 16px;
-            box-sizing: border-box;
             text-align: center;
+            margin-bottom: 20px;
+            box-sizing: border-box;
         }
-
-        input:focus {
-            outline: none;
-            border-color: var(--primary-color);
-            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.2);
-        }
-
+        input:focus { border-color: var(--primary); outline: none; }
         .btn {
             width: 100%;
             padding: 14px;
@@ -99,204 +67,211 @@
             font-size: 16px;
             font-weight: bold;
             cursor: pointer;
-            transition: background-color 0.2s;
+            transition: 0.2s;
+            margin-bottom: 10px;
         }
-
-        .btn-call {
-            background-color: var(--success-color);
-            color: white;
-        }
-
-        .btn-call:hover {
-            background-color: #15803d;
-        }
-
-        .btn-hangup {
-            background-color: var(--danger-color);
-            color: white;
+        .btn-call { background-color: var(--primary); color: white; }
+        .btn-call:hover { background-color: #059669; }
+        .btn-hangup { background-color: var(--danger); color: white; display: none; }
+        .btn-hangup:hover { background-color: #dc2626; }
+        .status { margin-top: 20px; color: #94a3b8; font-size: 14px; }
+        audio { display: none; }
+        
+        /* واجهة رنين مخصصة مدمجة تظهر أعلى الشاشة */
+        .ring-overlay {
             display: none;
+            position: fixed;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background-color: #1e293b;
+            border: 2px solid var(--primary);
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            z-index: 9999;
+            width: 90%;
+            max-width: 400px;
+            text-align: center;
+            animation: slideDown 0.3s ease-out;
         }
-
-        .btn-hangup:hover {
-            background-color: #b91c1c;
+        @keyframes slideDown {
+            from { top: -100px; opacity: 0; }
+            to { top: 20px; opacity: 1; }
         }
-
-        .status-box {
-            margin-top: 25px;
-            padding: 12px;
-            border-radius: 8px;
-            background-color: #f1f5f9;
-            font-size: 14px;
-            font-weight: 500;
+        .ring-buttons {
+            display: flex;
+            gap: 10px;
+            margin-top: 15px;
         }
-
-        .status-online {
-            color: var(--success-color);
+        .ring-btn {
+            flex: 1;
+            padding: 10px;
+            border: none;
+            border-radius: 6px;
+            font-weight: bold;
+            cursor: pointer;
         }
-
-        .status-connecting {
-            color: #d97706;
-        }
-
-        .status-offline {
-            color: var(--danger-color);
-        }
-
-        /* المكونات السمعية المخفية لـ WebRTC */
-        audio {
-            display: none;
-        }
+        .ring-accept { background-color: var(--primary); color: white; }
+        .ring-reject { background-color: var(--danger); color: white; }
     </style>
 </head>
 <body>
 
-    <div class="container">
-        <h1>🎙️ نظام الاتصال الصوتي الفوري</h1>
-        
-        <div class="user-id-box">
-            معرّف جهازك الثابت:
-            <span id="my-peer-id">جاري التوليد...</span>
-        </div>
-
-        <div class="input-group">
-            <label for="remote-id">أدخل معرّف الجهاز المراد الاتصال به:</label>
-            <input type="text" id="remote-id" placeholder="مثال: DEV-1234" autocomplete="off">
-        </div>
-
-        <button id="call-btn" class="btn btn-call">📞 بدء المكالمة الصوتية</button>
-        <button id="hangup-btn" class="btn btn-hangup">🛑 إنهاء المكالمة</button>
-
-        <div class="status-box" id="status-text">
-            الحالة: <span class="status-connecting">جاري الاتصال بخادم الإشارات السحابي...</span>
-        </div>
+<!-- واجهة الرنين العلوية للمكالمات الواردة -->
+<div class="ring-overlay" id="ring-ui">
+    <h3 style="margin:0 0 10px 0; color: #60a5fa;">📞 مكالمة صوتية واردة...</h3>
+    <div id="caller-name" style="font-weight: bold;">جهاز غير معروف يطلب الاتصال بك</div>
+    <div class="ring-buttons">
+        <button class="ring-btn ring-accept" onclick="acceptIncomingCall()">قبول</button>
+        <button class="ring-btn ring-reject" onclick="rejectIncomingCall()">رفض</button>
     </div>
+</div>
 
-    <!-- عنصر الصوت لتشغيل صوت الطرف الآخر -->
-    <audio id="remote-audio" autoplay></audio>
+<div class="container">
+    <h1>🎙 نظام الاتصال الصوتي السحابي</h1>
+    
+    <div>معرّف جهازك الثابت والمميز:</div>
+    <div class="id-box" id="my-id">جاري التوليد والاتصال...</div>
+    
+    <input type="text" id="remote-id" placeholder="أدخل معرّف الجهاز المراد الاتصال به">
+    
+    <button class="btn btn-call" id="call-btn" onclick="startCall()">📞 بدء المكالمة الصوتية</button>
+    <button class="btn btn-hangup" id="hangup-btn" onclick="endCall()">🛑 إنهاء المكالمة</button>
+    
+    <div class="status" id="status-text">الحالة: جاري تهيئة الاتصال السحابي...</div>
+</div>
 
-    <script>
-        // 1. توليد أو استرجاع معرف الجهاز الثابت من الذاكرة المحلية
-        let savedId = localStorage.getItem('my_voice_peer_id');
-        if (!savedId) {
-            const randomNum = Math.floor(1000 + Math.random() * 9000);
-            savedId = `DEV-${randomNum}`;
-            localStorage.setItem('my_voice_peer_id', savedId);
+<!-- عناصر الصوت الخفية لاستقبال المكالمة ونغمة الرنين -->
+<audio id="remote-audio" autoplay></audio>
+<audio id="ringtone-audio" loop></audio>
+
+<script>
+    // 1. توليد يوزر ثابت وحفظه بالجهاز
+    let savedId = localStorage.getItem('my_voice_device_id');
+    if (!savedId) {
+        savedId = 'DEV-' + Math.floor(1000 + Math.random() * 9000);
+        localStorage.setItem('my_voice_device_id', savedId);
+    }
+    document.getElementById('my-id').innerText = savedId;
+
+    let localStream;
+    let currentCall;
+    let pendingCall = null;
+
+    // تجهيز نغمة رنين افتراضية من خادم خارجي مستقر لتعمل تلقائياً
+    const ringtone = document.getElementById('ringtone-audio');
+    ringtone.src = "https://google.com";
+
+    // طلب إذن الإشعارات من المستخدم فور دخول الموقع ليتمكن من استقبال الاتصال بالخلفية
+    if (Notification.permission !== "granted" && Notification.permission !== "denied") {
+        Notification.requestPermission();
+    }
+
+    // تفعيل خاصية منع إغلاق الصفحة بالخطأ أثناء العمل
+    window.addEventListener('beforeunload', function (e) {
+        e.preventDefault();
+        e.returnValue = 'ملاحظة: إغلاق الصفحة سيؤدي لقطع الاتصال وعدم استقبال أي مكالمات واردة.';
+    });
+
+    // 2. إعداد الاتصال بخوادم PeerJS مع خوادم عبور قوية من جوجل
+    const peer = new Peer(savedId, {
+        config: {
+            'iceServers': [
+                { 'urls': 'stun:://google.com' },
+                { 'urls': 'stun:://google.com' }
+            ]
         }
+    });
 
-        // عرض معرف الجهاز في الواجهة
-        document.getElementById('my-peer-id').innerText = savedId;
+    peer.on('open', (id) => {
+        document.getElementById('status-text').innerText = "الحالة: جاهز تماماً وبانتظار المكالمات";
+    });
 
-        // 2. إعداد المتغيرات الأساسية لـ PeerJS والمكالمة
-        const peer = new Peer(savedId);
-        let currentCall = null;
-        let localStream = null;
+    // 3. استقبال المكالمات وتشغيل الرنين الفوري المطور
+    peer.on('call', (call) => {
+        pendingCall = call;
+        
+        // تشغيل نغمة الرنين الصوتية
+        ringtone.play().catch(e => console.log("تحتاج لتفاعل مع الصفحة لتشغيل الصوت تلقائياً"));
 
-        const callBtn = document.getElementById('call-btn');
-        const hangupBtn = document.getElementById('hangup-btn');
-        const statusText = document.getElementById('status-text');
-        const remoteAudio = document.getElementById('remote-audio');
-        const remoteIdInput = document.getElementById('remote-id');
+        // إظهار واجهة الرنين العلوية بالموقع
+        document.getElementById('caller-name').innerText = "الجهاز المتصل: " + call.peer;
+        document.getElementById('ring-ui').style.display = 'block';
 
-        // 3. عند نجاح الاتصال بخادم الإشارات السحابي المجاني
-        peer.on('open', (id) => {
-            statusText.innerHTML = 'الحالة: <span class="status-online">جاهز لاستقبال أو إجراء المكالمات ✅</span>';
-        });
+        // إرسال إشعار للنظام في حال كان المتصفح مصغراً أو في الخلفية
+        if (Notification.permission === "granted") {
+            const notification = new Notification("📞 مكالمة واردة في أداة الاتصال", {
+                body: `الجهاز ${call.peer} يحاول الاتصال بك الآن.`,
+                icon: "https://flaticon.com",
+                requireInteraction: true // يبقى الإشعار ثابتاً ولا يختفي تلقائياً
+            });
+            notification.onclick = function() {
+                window.focus();
+                notification.close();
+            };
+        }
+    });
 
-        peer.on('error', (err) => {
-            console.error(err);
-            statusText.innerHTML = `الحالة: <span class="status-offline">خطأ: ${err.type === 'peer-not-found' ? 'الجهاز الآخر غير موجود أو غير متصل' : 'فشل الاتصال'} ❌</span>`;
-            resetUI();
-        });
-
-        // 4. التعامل مع المكالمات الواردة (عندما يتصل بك جهاز آخر)
-        peer.on('call', (call) => {
-            if (confirm(`مكالمة صوتية واردة من جهاز: ${call.peer}
-هل تريد القبول؟`)) {
-                // طلب ميكروفون المستخدم الرد على المكالمة
-                navigator.mediaDevices.getUserMedia({ audio: true, video: false })
-                    .then((stream) => {
-                        localStream = stream;
-                        call.answer(stream); // إرسال صوتنا للطرف الآخر
-                        
-                        statusText.innerHTML = 'الحالة: <span class="status-online">🎙️ مكالمة نشطة الآن</span>';
-                        setupCallEvents(call);
-                    })
-                    .catch((err) => {
-                        alert('عذراً، يجب السماح بالوصول للميكروفون لقبول المكالمة.');
-                        call.close();
-                    });
-            } else {
-                call.close();
-            }
-        });
-
-        // 5. عند ضغط زر "بدء المكالمة الصوتية" من قبلك
-        callBtn.addEventListener('click', () => {
-            const remoteId = remoteIdInput.value.trim();
-            if (!remoteId) {
-                alert('الرجاء إدخال معرّف الجهاز الذي تود الاتصال به أولاً.');
-                return;
-            }
-
-            if (remoteId === savedId) {
-                alert('لا يمكنك الاتصال بجهازك الحالي!');
-                return;
-            }
-
-            statusText.innerHTML = 'الحالة: <span class="status-connecting">جاري الاتصال بالطرف الآخر... ⏳</span>';
-            
-            // طلب ميكروفون المستخدم للاتصال الصادر
+    // دالة قبول المكالمة من الزر العلوي
+    function acceptIncomingCall() {
+        stopRingtone();
+        if (pendingCall) {
             navigator.mediaDevices.getUserMedia({ audio: true, video: false })
-                .then((stream) => {
-                    localStream = stream;
-                    const call = peer.call(remoteId, stream); // بدء الاتصال بالطرف الآخر وإرسال الصوت
-                    setupCallEvents(call);
-                })
-                .catch((err) => {
-                    alert('فشل الوصول للميكروفون. تأكد من إعطاء الصلاحية وفتح الموقع عبر رابط آمن HTTPS.');
-                    statusText.innerHTML = 'الحالة: <span class="status-offline">فشل الاتصال بسبب صلاحيات الميكروفون ❌</span>';
-                });
-        });
-
-        // 6. التعامل مع أحداث المكالمة (استقبال الصوت، الإنهاء)
-        function setupCallEvents(call) {
-            currentCall = call;
-            callBtn.style.display = 'none';
-            hangupBtn.style.display = 'block';
-
-            // عند استقبال البث الصوتي من الطرف الآخر
-            call.on('stream', (remoteStream) => {
-                remoteAudio.srcObject = remoteStream;
-                statusText.innerHTML = 'الحالة: <span class="status-online">🎙️ مكالمة نشطة الآن</span>';
-            });
-
-            // عند إغلاق المكالمة من قبل الطرف الآخر
-            call.on('close', () => {
-                alert('تم إنهاء المكالمة من قبل الطرف الآخر.');
-                resetUI();
+            .then((stream) => {
+                localStream = stream;
+                pendingCall.answer(stream);
+                handleCall(pendingCall);
+                pendingCall = null;
+            }).catch((err) => {
+                alert("فشل الوصول للميكروفون: " + err);
+                rejectIncomingCall();
             });
         }
+    }
 
-        // 7. عند ضغط زر "إنهاء المكالمة"
-        hangupBtn.addEventListener('click', () => {
-            if (currentCall) {
-                currentCall.close();
-            }
-            resetUI();
-            statusText.innerHTML = 'الحالة: <span class="status-online">جاهز لاستقبال أو إجراء المكالمات ✅</span>';
-        });
-
-        // إعادة واجهة المستخدم لوضعها الطبيعي
-        function resetUI() {
-            callBtn.style.display = 'block';
-            hangupBtn.style.display = 'none';
-            
-            if (localStream) {
-                localStream.getTracks().forEach(track => track.stop()); // إيقاف تشغيل الميكروفون كلياً
-            }
-            remoteAudio.srcObject = null;
-            currentCall = null;
+    // دالة رفض المكالمة من الزر العلوي
+    function rejectIncomingCall() {
+        stopRingtone();
+        if (pendingCall) {
+            pendingCall.close();
+            pendingCall = null;
         }
-    </script>
-</body>
-</html>
+        document.getElementById('status-text').innerText = "الحالة: تم رفض المكالمة الواردة";
+    }
+
+    function stopRingtone() {
+        ringtone.pause();
+        ringtone.currentTime = 0;
+        document.getElementById('ring-ui').style.display = 'none';
+    }
+
+    // 4. إجراء مكالمة صادرة للطرف الآخر
+    function startCall() {
+        const remoteId = document.getElementById('remote-id').value.trim();
+        if (!remoteId) {
+            alert("يرجى إدخال معرّف الجهاز الآخر أولاً!");
+            return;
+        }
+
+        document.getElementById('status-text').innerText = "جاري طلب صلاحية الميكروفون والاتصال...";
+
+        navigator.mediaDevices.getUserMedia({ audio: true, video: false })
+        .then((stream) => {
+            localStream = stream;
+            const call = peer.call(remoteId, stream);
+            handleCall(call);
+        }).catch((err) => {
+            document.getElementById('status-text').innerText = "خطأ: لم يتم السماح بالميكروفون";
+            alert("يرجى إعطاء صلاحية الميكروفون للموقع لتتمكن من تمرير صوتك.");
+        });
+    }
+
+    // 5. إدارة مجرى الصوت والتحكم بواجهة المستخدم أثناء المكالمة الحية
+    function handleCall(call) {
+        currentCall = call;
+        document.getElementById('status-text').innerText = "الحالة: متصل الآن (المكالمة جارية...)";
+        document.getElementById('call-btn').style.display = 'none';
+        document.getElementById('hangup-btn').style.display = 'block';
+
+        call.on('stream', (remoteStream) => {
